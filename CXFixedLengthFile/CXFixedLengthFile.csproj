@@ -11,7 +11,7 @@
     <Version>2.0.2</Version>
     <PackageReleaseNotes>v2.0.0: Re-design the project because GetFields doesn't guarantee the order.
 v2.0.1: Supported types DateTime, TimeSpan.
-v2.0.2:</PackageReleaseNotes>
+v2.0.2: Added SeekModel.</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

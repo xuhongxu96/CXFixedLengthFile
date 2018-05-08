@@ -2,6 +2,14 @@
 
 Fixed Length File Reader and Writer.
 
+## Install
+
+[NuGet Page](https://www.nuget.org/packages/CXFixedLengthFile/)
+
+``` cmd
+Install-Package CXFixedLengthFile -Version 2.0.2
+```
+
 ## Usage
 
 Use Attribute `FixedLengthField`, `UnionField`, `FieldLength` and `FieldEncoding` to annotate the **fields** and **properties** of your struct or class.
