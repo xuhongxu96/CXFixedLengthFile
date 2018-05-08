@@ -2,6 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>Fixed Length File Reader and Writer.</Description>
+    <Copyright>Hongxu Xu</Copyright>
+    <PackageProjectUrl>https://github.com/xuhongxu96/CXFixedLengthFile</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/xuhongxu96/CXFixedLengthFile/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/xuhongxu96/CXFixedLengthFile</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
