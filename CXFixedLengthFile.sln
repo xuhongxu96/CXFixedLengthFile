@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27004.2009
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CXFixedLengthFile", "CXFixedLengthFile\CXFixedLengthFile.csproj", "{4B17E8F8-A439-446A-87EF-8467F8B3C481}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CXFixedLengthFileUnitTest", "CXFixedLengthFileUnitTest\CXFixedLengthFileUnitTest.csproj", "{1D2C460A-88F1-4C09-B0A3-E855EEC9BBB5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{4B17E8F8-A439-446A-87EF-8467F8B3C481}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B17E8F8-A439-446A-87EF-8467F8B3C481}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B17E8F8-A439-446A-87EF-8467F8B3C481}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D2C460A-88F1-4C09-B0A3-E855EEC9BBB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D2C460A-88F1-4C09-B0A3-E855EEC9BBB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D2C460A-88F1-4C09-B0A3-E855EEC9BBB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D2C460A-88F1-4C09-B0A3-E855EEC9BBB5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
