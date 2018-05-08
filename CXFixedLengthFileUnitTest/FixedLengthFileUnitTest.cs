@@ -106,6 +106,7 @@ namespace CXFixedLengthFileUnitTest
                 intUnionField = 1,
                 charField = char.MaxValue,
                 byteArrField = new byte[] { 1, 2 },
+                dateTimeField = DateTime.Now,
             };
 
             var model2 = new FileModel
@@ -116,6 +117,7 @@ namespace CXFixedLengthFileUnitTest
                 asciiStrField = "abc",
                 charField = char.MinValue,
                 byteArrField = new byte[] { 0, 255 },
+                dateTimeField = DateTime.Now,
             };
 
             var model3 = new FileModel
@@ -126,6 +128,7 @@ namespace CXFixedLengthFileUnitTest
                 asciiStrField = "",
                 charField = '込',
                 byteArrField = new byte[] { 1, 2 },
+                dateTimeField = DateTime.MinValue,
             };
 
             var model4 = new FileModel
@@ -136,6 +139,7 @@ namespace CXFixedLengthFileUnitTest
                 asciiStrField = "123",
                 charField = '込',
                 byteArrField = new byte[] { 1, 2 },
+                dateTimeField = DateTime.MaxValue,
             };
 
             var models = new FileModel[] { model1, model2, model3, model4 };
@@ -160,6 +164,7 @@ namespace CXFixedLengthFileUnitTest
                 long longField;
                 string asciiStrField;
                 char charField;
+                DateTime dateTimeField;
 
                 foreach (var model in models)
                 {
@@ -191,6 +196,11 @@ namespace CXFixedLengthFileUnitTest
                     // byteField: 2
                     stream.Read(buffer, 0, 2);
                     Assert.IsTrue(buffer.Take(2).SequenceEqual(model.byteArrField));
+
+                    // dateTimeField: 8
+                    stream.Read(buffer, 0, 8);
+                    dateTimeField = DateTime.FromBinary(BitConverter.ToInt64(buffer, 0));
+                    Assert.AreEqual(model.dateTimeField, dateTimeField);
                 }
             }
         }
@@ -218,6 +228,7 @@ namespace CXFixedLengthFileUnitTest
                 strUnionField = "bcd",
                 charField = char.MaxValue,
                 byteArrField = new byte[] { 1, 2 },
+                dateTimeField = DateTime.Now,
             };
 
             var model2 = new FileModel
@@ -230,6 +241,7 @@ namespace CXFixedLengthFileUnitTest
                 strUnionField = "bc",
                 charField = char.MinValue,
                 byteArrField = new byte[] { 1, 2 },
+                dateTimeField = DateTime.Now,
             };
 
             var model3 = new FileModel
@@ -242,6 +254,7 @@ namespace CXFixedLengthFileUnitTest
                 strUnionField = "",
                 charField = '込',
                 byteArrField = new byte[] { 1, 2 },
+                dateTimeField = DateTime.MinValue,
             };
 
             var model4 = new FileModel
@@ -254,6 +267,7 @@ namespace CXFixedLengthFileUnitTest
                 strUnionField = "23",
                 charField = '込',
                 byteArrField = new byte[] { 1, 2 },
+                dateTimeField = DateTime.MaxValue,
             };
 
             var models = new FileModel[] { model1, model2, model3, model4 };

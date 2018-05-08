@@ -109,6 +109,16 @@ namespace CXFixedLengthFile
                 var encoding = fieldEncodingAttr?.GetEncoding() ?? Encoding.UTF8;
                 buffer = encoding.GetBytes((string)fieldValue);
             }
+            else if (typeof(DateTime) == fieldType)
+            {
+                length = fieldLengthAttr?.GetLength() ?? sizeof(long);
+                buffer = BitConverter.GetBytes(((DateTime)fieldValue).ToBinary());
+            }
+            else if (typeof(TimeSpan) == fieldType)
+            {
+                length = fieldLengthAttr?.GetLength() ?? sizeof(long);
+                buffer = BitConverter.GetBytes(((TimeSpan)fieldValue).Ticks);
+            }
             else
             {
                 throw new NotSupportedException(

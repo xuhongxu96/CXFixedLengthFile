@@ -103,6 +103,16 @@ namespace CXFixedLengthFile
                 var encoding = fieldEncodingAttr?.GetEncoding() ?? Encoding.UTF8;
                 func = data => encoding.GetString(data, 0, length).TrimEnd('\0');
             }
+            else if (typeof(DateTime) == fieldType)
+            {
+                length = fieldLengthAttr?.GetLength() ?? sizeof(long);
+                func = data => DateTime.FromBinary(BitConverter.ToInt64(data, 0));
+            }
+            else if (typeof(TimeSpan) == fieldType)
+            {
+                length = fieldLengthAttr?.GetLength() ?? sizeof(long);
+                func = data => TimeSpan.FromTicks(BitConverter.ToInt64(data, 0));
+            }
             else
             {
                 throw new NotSupportedException(

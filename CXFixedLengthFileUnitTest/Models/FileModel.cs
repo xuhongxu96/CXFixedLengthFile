@@ -74,6 +74,13 @@ namespace CXFixedLengthFileUnitTest.Models
         [FieldLength(2)]
         public byte[] byteArrField;
 
+        /// <summary>
+        /// Offset: 130
+        /// Length: 8
+        /// </summary>
+        [FixedLengthField(7)]
+        public DateTime dateTimeField;
+
         public override bool Equals(object obj)
         {
             if (!(obj is FileModel))
