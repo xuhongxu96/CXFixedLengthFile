@@ -19,7 +19,7 @@ namespace CXFixedLengthFileUnitTest.Models
         public string utf8StrField { get; set; }
 
         /// <summary>
-        /// Offset: 100
+        /// Offset: 108
         /// Length: 10
         /// </summary>
         [FixedLengthField(3)]
@@ -27,7 +27,7 @@ namespace CXFixedLengthFileUnitTest.Models
         public int intField;
 
         /// <summary>
-        /// Offset: 110
+        /// Offset: 100
         /// Length: 8
         /// </summary>
         [FixedLengthField(2)]
