@@ -115,7 +115,7 @@ namespace CXFixedLengthFileUnitTest
                 longField = long.MaxValue,
                 asciiStrField = "abc",
                 charField = char.MinValue,
-                byteArrField = new byte[] { 1, 2 },
+                byteArrField = new byte[] { 0, 255 },
             };
 
             var model3 = new FileModel
@@ -168,15 +168,15 @@ namespace CXFixedLengthFileUnitTest
                     utf8StrField = Encoding.UTF8.GetString(buffer, 0, 100).TrimEnd('\0');
                     Assert.AreEqual(model.utf8StrField, utf8StrField);
 
-                    // intField: 10
-                    stream.Read(buffer, 0, 10);
-                    intField = BitConverter.ToInt32(buffer, 0);
-                    Assert.AreEqual(model.intField, intField);
-
                     // longField: 8
                     stream.Read(buffer, 0, 8);
                     longField = BitConverter.ToInt64(buffer, 0);
                     Assert.AreEqual(model.longField, longField);
+
+                    // intField: 10
+                    stream.Read(buffer, 0, 10);
+                    intField = BitConverter.ToInt32(buffer, 0);
+                    Assert.AreEqual(model.intField, intField);
 
                     // asciiStrField: 8
                     stream.Read(buffer, 0, 8);
@@ -217,7 +217,7 @@ namespace CXFixedLengthFileUnitTest
                 intUnionField = Utf8StrToInt("这是一个"),
                 strUnionField = "bcd",
                 charField = char.MaxValue,
-                byteArrField = new byte[] {1, 2},
+                byteArrField = new byte[] { 1, 2 },
             };
 
             var model2 = new FileModel

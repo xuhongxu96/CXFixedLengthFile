@@ -22,7 +22,7 @@ namespace CXFixedLengthFileUnitTest.Models
         /// Offset: 100
         /// Length: 10
         /// </summary>
-        [FixedLengthField(2)]
+        [FixedLengthField(3)]
         [FieldLength(10)]
         public int intField;
 
@@ -30,7 +30,7 @@ namespace CXFixedLengthFileUnitTest.Models
         /// Offset: 110
         /// Length: 8
         /// </summary>
-        [FixedLengthField(3)]
+        [FixedLengthField(2)]
         [FieldLength(8)]
         public long longField;
 

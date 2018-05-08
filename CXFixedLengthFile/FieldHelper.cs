@@ -27,7 +27,7 @@ namespace CXFixedLengthFile
         }
 
         private static (Field field, bool skip, bool hasOtherAttr)
-            SetFieldPerAttr(object[] attrs)
+            SetFieldPerAttr(object[] attrs, string fieldOrProp, string fieldName, Type fieldType)
         {
             var currentField = new Field();
             var skip = true;
@@ -37,11 +37,21 @@ namespace CXFixedLengthFile
                 if (attr is UnionFieldAttribute unionAttr)
                 {
                     currentField.offset = unionAttr.GetOffset();
+                    if (currentField.order != -1)
+                    {
+                        throw new InvalidDataException($"You can only annotate one of the " +
+                            $"UnionField and FixedLengthField to {fieldOrProp} '{fieldName}'.");
+                    }
                     skip = false;
                 }
                 else if (attr is FixedLengthFieldAttribute fieldAttr)
                 {
                     currentField.order = fieldAttr.GetOrder();
+                    if (currentField.offset != -1)
+                    {
+                        throw new InvalidDataException($"You can only annotate one of the " +
+                            $"UnionField and FixedLengthField to {fieldOrProp} '{fieldName}'.");
+                    }
                     skip = false;
                 }
                 else if (attr is FieldLengthAttribute lengthAttr)
@@ -51,6 +61,11 @@ namespace CXFixedLengthFile
                 }
                 else if (attr is FieldEncodingAttribute encodingAttr)
                 {
+                    if (fieldType != typeof(string))
+                    {
+                        throw new InvalidDataException($"FieldEncoding is only for string, " +
+                            $"but {fieldOrProp} '{fieldName}' is not a string.");
+                    }
                     currentField.fieldEncodingAttr = encodingAttr;
                     hasOtherAttr = true;
                 }
@@ -66,7 +81,7 @@ namespace CXFixedLengthFile
             foreach (var field in typeof(T).GetFields())
             {
                 (var currentField, var skip, var hasOtherAttr)
-                    = SetFieldPerAttr(field.GetCustomAttributes(true));
+                    = SetFieldPerAttr(field.GetCustomAttributes(true), "field", field.Name, field.FieldType);
 
                 if (!skip)
                 {
@@ -85,7 +100,7 @@ namespace CXFixedLengthFile
                 }
                 else if (hasOtherAttr)
                 {
-                    throw new InvalidDataException($"Field {field.Name} has FieldLengthAttribute " +
+                    throw new InvalidDataException($"Field '{field.Name}' has FieldLengthAttribute " +
                         $"or FieldEncodingAttribute FixedLengthUnionField, " +
                         $"but doesn't have FixedLengthFieldAttribute or UnionFieldAttribute.");
                 }
@@ -94,7 +109,7 @@ namespace CXFixedLengthFile
             foreach (var prop in typeof(T).GetProperties())
             {
                 (var currentField, var skip, var hasOtherAttr)
-                    = SetFieldPerAttr(prop.GetCustomAttributes(true));
+                    = SetFieldPerAttr(prop.GetCustomAttributes(true), "property", prop.Name, prop.PropertyType);
 
                 if (!skip)
                 {
@@ -113,7 +128,7 @@ namespace CXFixedLengthFile
                 }
                 else if (hasOtherAttr)
                 {
-                    throw new InvalidDataException($"Property {prop.Name} has FieldLengthAttribute " +
+                    throw new InvalidDataException($"Property '{prop.Name}' has FieldLengthAttribute " +
                         $"or FieldEncodingAttribute FixedLengthUnionField, " +
                         $"but doesn't have FixedLengthFieldAttribute or UnionFieldAttribute.");
                 }
