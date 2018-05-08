@@ -9,126 +9,22 @@ using System.Threading.Tasks;
 
 namespace CXFixedLengthFile
 {
-    public class FixedLengthFileReader
+    public class FixedLengthFileReader<T> : FixedLengthFileIO<T> where T : new()
     {
-        private FileStream _fileStream = null;
         private byte[] _buffer;
 
-        public FixedLengthFileReader(FileStream stream)
+        public FixedLengthFileReader(FileStream stream) : base(stream)
         {
-            _fileStream = stream;
             _buffer = new byte[8];
         }
 
-        private (int length, Func<byte[], object>) ReadField(Type fieldType,
-            string fieldName,
-            string fieldOrProp,
-            FieldLengthAttribute fieldLengthAttr,
-            FieldEncodingAttribute fieldEncodingAttr)
-        {
-            int length;
-            Func<byte[], object> func;
-
-            if (typeof(short) == fieldType)
-            {
-                length = fieldLengthAttr?.GetLength() ?? sizeof(short);
-                func = data => BitConverter.ToInt16(data, 0);
-            }
-            else if (typeof(int) == fieldType)
-            {
-                length = fieldLengthAttr?.GetLength() ?? sizeof(int);
-                func = data => BitConverter.ToInt32(data, 0);
-            }
-            else if (typeof(long) == fieldType)
-            {
-                length = fieldLengthAttr?.GetLength() ?? sizeof(long);
-                func = data => BitConverter.ToInt64(data, 0);
-            }
-            else if (typeof(bool) == fieldType)
-            {
-                length = fieldLengthAttr?.GetLength() ?? sizeof(bool);
-                func = data => BitConverter.ToBoolean(data, 0);
-            }
-            else if (typeof(float) == fieldType)
-            {
-                length = fieldLengthAttr?.GetLength() ?? sizeof(float);
-                func = data => BitConverter.ToSingle(data, 0);
-            }
-            else if (typeof(double) == fieldType)
-            {
-                length = fieldLengthAttr?.GetLength() ?? sizeof(double);
-                func = data => BitConverter.ToDouble(data, 0);
-            }
-            else if (typeof(ushort) == fieldType)
-            {
-                length = fieldLengthAttr?.GetLength() ?? sizeof(ushort);
-                func = data => BitConverter.ToUInt16(data, 0);
-            }
-            else if (typeof(uint) == fieldType)
-            {
-                length = fieldLengthAttr?.GetLength() ?? sizeof(uint);
-                func = data => BitConverter.ToUInt32(data, 0);
-            }
-            else if (typeof(ulong) == fieldType)
-            {
-                length = fieldLengthAttr?.GetLength() ?? sizeof(ulong);
-                func = data => BitConverter.ToUInt64(data, 0);
-            }
-            else if (typeof(char) == fieldType)
-            {
-                length = fieldLengthAttr?.GetLength() ?? sizeof(char);
-                func = data => BitConverter.ToChar(data, 0);
-            }
-            else if (typeof(byte) == fieldType)
-            {
-                length = fieldLengthAttr?.GetLength() ?? sizeof(byte);
-                func = data => data.FirstOrDefault();
-            }
-            else if (typeof(byte[]) == fieldType)
-            {
-                length = fieldLengthAttr?.GetLength() ?? -1;
-                if (length == -1)
-                {
-                    throw new InvalidDataException($"Should specific length of string {fieldOrProp} '{fieldName}'.");
-                }
-                func = data => data.Take(length).ToArray();
-            }
-            else if (typeof(string) == fieldType)
-            {
-                length = fieldLengthAttr?.GetLength() ?? -1;
-                if (length == -1)
-                {
-                    throw new InvalidDataException($"Should specific length of string {fieldOrProp} '{fieldName}'.");
-                }
-                var encoding = fieldEncodingAttr?.GetEncoding() ?? Encoding.UTF8;
-                func = data => encoding.GetString(data, 0, length).TrimEnd('\0');
-            }
-            else if (typeof(DateTime) == fieldType)
-            {
-                length = fieldLengthAttr?.GetLength() ?? sizeof(long);
-                func = data => DateTime.FromBinary(BitConverter.ToInt64(data, 0));
-            }
-            else if (typeof(TimeSpan) == fieldType)
-            {
-                length = fieldLengthAttr?.GetLength() ?? sizeof(long);
-                func = data => TimeSpan.FromTicks(BitConverter.ToInt64(data, 0));
-            }
-            else
-            {
-                throw new NotSupportedException(
-                    $"Type {fieldType.Name} of {fieldOrProp} '{fieldName}' is not supported.");
-            }
-
-            return (length, func);
-        }
-
-        public T Read<T>() where T : new()
+        public T Read()
         {
             bool isValueType = typeof(T).IsValueType;
             var rawModel = new T();
             object model = rawModel;
 
-            var fieldList = FieldHelper.GetFieldList<T>(rawModel);
+            var fieldList = FixedLengthFieldHelper.GetFixedLengthFieldList<T>();
 
             if (isValueType)
             {
@@ -140,7 +36,7 @@ namespace CXFixedLengthFile
 
             foreach (var field in fieldList)
             {
-                var offset = field.offset;
+                var offset = field.Offset;
                 if (offset == -1)
                 {
                     if (_fileStream.Position != lastPos)
@@ -153,8 +49,7 @@ namespace CXFixedLengthFile
                     _fileStream.Seek(basePos + offset, SeekOrigin.Begin);
                 }
 
-                (var length, var func) = ReadField(field.type, field.name, field.fieldOrProp,
-                    field.fieldLengthAttr, field.fieldEncodingAttr);
+                var length = FixedLengthFieldHelper.GetFieldLength(field);
 
                 if (_buffer.Length < length) _buffer = new byte[length];
                 _fileStream.Read(_buffer, 0, length);
@@ -164,14 +59,13 @@ namespace CXFixedLengthFile
                     lastPos = _fileStream.Position;
                 }
 
-                var val = func(_buffer);
+                var val = FixedLengthFieldHelper.BytesToValue(_buffer, field);
                 if (val == null)
                 {
-                    throw new InvalidDataException($"The value of {field.fieldOrProp} '{field.name}' cannot be null.");
+                    throw new InvalidDataException($"The value of {field.TypeString} '{field.Name}' cannot be null.");
                 }
 
-                field.field?.SetValue(model, val);
-                field.prop?.SetValue(model, val);
+                field.SetValue(model, val);
             }
 
             _fileStream.Seek(lastPos, SeekOrigin.Begin);
@@ -184,11 +78,11 @@ namespace CXFixedLengthFile
             return rawModel;
         }
 
-        public async Task<T> ReadAsync<T>() where T : new()
+        public async Task<T> ReadAsync()
         {
             return await Task.Run(() =>
             {
-                return Read<T>();
+                return Read();
             });
         }
     }

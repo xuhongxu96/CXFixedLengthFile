@@ -22,9 +22,9 @@ namespace CXFixedLengthFileUnitTest
 
             using (var stream = File.OpenWrite(Path.GetTempFileName()))
             {
-                var writer = new FixedLengthFileWriter(stream);
                 var exception = Assert.ThrowsException<InvalidDataException>(() =>
                 {
+                    var writer = new FixedLengthFileWriter<FileModel>(stream);
                     writer.Write(errModel1);
                 });
                 Assert.IsTrue(exception.Message.Contains("asciiStrField"));
@@ -38,9 +38,9 @@ namespace CXFixedLengthFileUnitTest
 
             using (var stream = File.OpenWrite(Path.GetTempFileName()))
             {
-                var writer = new FixedLengthFileWriter(stream);
                 var exception = Assert.ThrowsException<InvalidDataException>(() =>
                 {
+                    var writer = new FixedLengthFileWriter<FileModel>(stream);
                     writer.Write(errModel2);
                 });
                 Assert.IsTrue(exception.Message.Contains("utf8StrField"));
@@ -54,9 +54,9 @@ namespace CXFixedLengthFileUnitTest
 
             using (var stream = File.OpenWrite(Path.GetTempFileName()))
             {
-                var writer = new FixedLengthFileWriter(stream);
                 var exception = Assert.ThrowsException<InvalidDataException>(() =>
                 {
+                    var writer = new FixedLengthFileWriter<InvalidFileModel>(stream);
                     writer.Write(errModel3);
                 });
                 Assert.IsTrue(exception.Message.Contains("intField"));
@@ -70,9 +70,9 @@ namespace CXFixedLengthFileUnitTest
 
             using (var stream = File.OpenWrite(Path.GetTempFileName()))
             {
-                var writer = new FixedLengthFileWriter(stream);
                 var exception = Assert.ThrowsException<InvalidDataException>(() =>
                 {
+                    var writer = new FixedLengthFileWriter<InvalidFileModel2>(stream);
                     writer.Write(errModel4);
                 });
                 Assert.IsTrue(exception.Message.Contains("strField"));
@@ -86,9 +86,9 @@ namespace CXFixedLengthFileUnitTest
 
             using (var stream = File.OpenWrite(Path.GetTempFileName()))
             {
-                var writer = new FixedLengthFileWriter(stream);
                 Assert.ThrowsException<NotSupportedException>(() =>
                 {
+                    var writer = new FixedLengthFileWriter<InvalidFileModel3>(stream);
                     writer.Write(errModel5);
                 });
             }
@@ -148,7 +148,7 @@ namespace CXFixedLengthFileUnitTest
 
             using (var stream = File.OpenWrite(fileName))
             {
-                var writer = new FixedLengthFileWriter(stream);
+                var writer = new FixedLengthFileWriter<FileModel>(stream);
 
                 foreach (var model in models)
                 {
@@ -276,7 +276,7 @@ namespace CXFixedLengthFileUnitTest
 
             using (var stream = File.OpenWrite(fileName))
             {
-                var writer = new FixedLengthFileWriter(stream);
+                var writer = new FixedLengthFileWriter<FileModel>(stream);
 
                 foreach (var model in models)
                 {
@@ -286,11 +286,11 @@ namespace CXFixedLengthFileUnitTest
 
             using (var stream = File.OpenRead(fileName))
             {
-                var reader = new FixedLengthFileReader(stream);
+                var reader = new FixedLengthFileReader<FileModel>(stream);
 
                 foreach (var model in models)
                 {
-                    var outModel = reader.Read<FileModel>();
+                    var outModel = reader.Read();
                     Assert.AreEqual(model, outModel);
                 }
             }

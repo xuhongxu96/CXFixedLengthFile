@@ -184,8 +184,8 @@ var fileName = Path.GetTempFileName();
 
 using (var stream = File.OpenWrite(fileName))
 {
-    var writer = new FixedLengthFileWriter(stream);
-    writer.Write(model1);
+	var writer = new FixedLengthFileWriter<FileModel>(stream);
+	writer.Write(model1);
 	writer.Write(model2);
 }
 ```
@@ -195,9 +195,9 @@ using (var stream = File.OpenWrite(fileName))
 ``` C#
 using (var stream = File.OpenRead(fileName))
 {
-    var reader = new FixedLengthFileReader(stream);
-	var model1 = reader.Read<FileModel>();
-    var model2 = reader.Read<FileModel>();
+	var reader = new FixedLengthFileReader<FileModel>(stream);
+	var model1 = reader.Read();
+	var model2 = reader.Read();
 }
 ```
 
