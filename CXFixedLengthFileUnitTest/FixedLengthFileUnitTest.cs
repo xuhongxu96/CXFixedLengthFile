@@ -76,7 +76,7 @@ namespace CXFixedLengthFileUnitTest
                     writer.Write(errModel4);
                 });
                 Assert.IsTrue(exception.Message.Contains("strField"));
-                Assert.IsTrue(exception.Message.Contains("Should specific length of string field"));
+                Assert.IsTrue(exception.Message.Contains("Should specific length of string"));
             }
 
             var errModel5 = new InvalidFileModel3
@@ -103,7 +103,7 @@ namespace CXFixedLengthFileUnitTest
                 intField = int.MaxValue,
                 longField = long.MinValue,
                 asciiStrField = "abcdefgh",
-                intFieldUnion = 1,
+                intUnionField = 1,
                 charField = char.MaxValue,
                 byteArrField = new byte[] { 1, 2 },
             };
@@ -214,7 +214,8 @@ namespace CXFixedLengthFileUnitTest
                 intField = int.MaxValue,
                 longField = long.MinValue,
                 asciiStrField = "abcdefgh",
-                intFieldUnion = Utf8StrToInt("这是一个"),
+                intUnionField = Utf8StrToInt("这是一个"),
+                strUnionField = "bcd",
                 charField = char.MaxValue,
                 byteArrField = new byte[] {1, 2},
             };
@@ -225,7 +226,8 @@ namespace CXFixedLengthFileUnitTest
                 intField = 1,
                 longField = long.MaxValue,
                 asciiStrField = "abc",
-                intFieldUnion = Utf8StrToInt("测试文本"),
+                intUnionField = Utf8StrToInt("测试文本"),
+                strUnionField = "bc",
                 charField = char.MinValue,
                 byteArrField = new byte[] { 1, 2 },
             };
@@ -236,7 +238,8 @@ namespace CXFixedLengthFileUnitTest
                 intField = 1,
                 longField = int.MinValue,
                 asciiStrField = "",
-                intFieldUnion = Utf8StrToInt("啦"),
+                intUnionField = Utf8StrToInt("啦"),
+                strUnionField = "",
                 charField = '哈',
                 byteArrField = new byte[] { 1, 2 },
             };
@@ -247,7 +250,8 @@ namespace CXFixedLengthFileUnitTest
                 // intField = 0,
                 // longField = 0,
                 asciiStrField = "123",
-                intFieldUnion = Utf8StrToInt("abcdefg"),
+                intUnionField = Utf8StrToInt("abcdefg"),
+                strUnionField = "23",
                 charField = '哈',
                 byteArrField = new byte[] { 1, 2 },
             };

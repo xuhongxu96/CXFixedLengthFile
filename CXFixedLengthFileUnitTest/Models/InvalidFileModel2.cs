@@ -9,9 +9,9 @@ namespace CXFixedLengthFileUnitTest.Models
     {
         /// <summary>
         /// Offset: 0
-        /// Length: 1
+        /// Length: ??
         /// </summary>
-        [FixedLengthField]
+        [FixedLengthField(0)]
         public string strField;
     }
 }

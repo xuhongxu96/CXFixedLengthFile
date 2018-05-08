@@ -12,50 +12,66 @@ namespace CXFixedLengthFileUnitTest.Models
         /// <summary>
         /// Offset: 0
         /// Length: 100
+        /// Encoding: UTF-8 (Default)
         /// </summary>
-        [FixedLengthField(100)]
-        public string utf8StrField;
+        [FixedLengthField(1)]
+        [FieldLength(100)]
+        public string utf8StrField { get; set; }
 
         /// <summary>
         /// Offset: 100
         /// Length: 10
         /// </summary>
-        [FixedLengthField(10)]
+        [FixedLengthField(2)]
+        [FieldLength(10)]
         public int intField;
 
         /// <summary>
         /// Offset: 110
         /// Length: 8
         /// </summary>
-        [FixedLengthField]
+        [FixedLengthField(3)]
+        [FieldLength(8)]
         public long longField;
 
         /// <summary>
         /// Offset: 118
         /// Length: 8
+        /// Encoding: ASCII
         /// </summary>
-        [FixedLengthField(8, encoding = "ascii")]
+        [FixedLengthField(4)]
+        [FieldLength(8)]
+        [FieldEncoding("ASCII")]
         public string asciiStrField;
 
         /// <summary>
         /// Offset: 0
         /// Length: 4
         /// </summary>
-        [FixedLengthField(offset = 0)]
-        public int intFieldUnion;
+        [UnionField(0)]
+        public int intUnionField { get; set; }
+
+        /// <summary>
+        /// Offset: 119
+        /// Length: 3
+        /// </summary>
+        [UnionField(119)]
+        [FieldLength(3)]
+        public string strUnionField;
 
         /// <summary>
         /// Offset: 126
         /// Length: 2
         /// </summary>
-        [FixedLengthField]
+        [FixedLengthField(5)]
         public char charField;
 
         /// <summary>
         /// Offset: 128
         /// Length: 2
         /// </summary>
-        [FixedLengthField(2)]
+        [FixedLengthField(6)]
+        [FieldLength(2)]
         public byte[] byteArrField;
 
         public override bool Equals(object obj)
@@ -70,7 +86,8 @@ namespace CXFixedLengthFileUnitTest.Models
                    intField == model.intField &&
                    longField == model.longField &&
                    asciiStrField == model.asciiStrField &&
-                   intFieldUnion == model.intFieldUnion &&
+                   intUnionField == model.intUnionField &&
+                   strUnionField == model.strUnionField &&
                    charField == model.charField &&
                    byteArrField.SequenceEqual(model.byteArrField);
         }
@@ -83,7 +100,8 @@ namespace CXFixedLengthFileUnitTest.Models
             hashCode = hashCode * -1521134295 + intField.GetHashCode();
             hashCode = hashCode * -1521134295 + longField.GetHashCode();
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(asciiStrField);
-            hashCode = hashCode * -1521134295 + intFieldUnion.GetHashCode();
+            hashCode = hashCode * -1521134295 + intUnionField.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(strUnionField);
             hashCode = hashCode * -1521134295 + charField.GetHashCode();
             hashCode = hashCode * -1521134295 + byteArrField.GetHashCode();
             return hashCode;
@@ -95,9 +113,10 @@ namespace CXFixedLengthFileUnitTest.Models
                 + $"intField: {intField}\n"
                 + $"longField: {longField}\n"
                 + $"asciiStrField: {asciiStrField}\n"
-                + $"intFieldUnion: {intFieldUnion}\n"
+                + $"intFieldUnion: {intUnionField}\n"
+                + $"strFieldUnion: {strUnionField}\n"
                 + $"charField: {(int)charField}\n"
-                + $"byteArrField: {string.Join(",", byteArrField)}\n";
+                + $"byteArrField: {string.Join(",", byteArrField ?? new byte[] { })}\n";
         }
     }
 }

@@ -8,7 +8,7 @@ namespace CXFixedLengthFileUnitTest.Models
 {
     public struct InvalidFileModel3
     {
-        [FixedLengthField]
+        [FixedLengthField(1)]
         public Exception exceptionField;
     }
 }

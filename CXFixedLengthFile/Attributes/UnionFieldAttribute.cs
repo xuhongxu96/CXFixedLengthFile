@@ -5,18 +5,18 @@ using System.Text;
 namespace CXFixedLengthFile.Attributes
 {
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-    public class FixedLengthFieldAttribute : Attribute
+    public class UnionFieldAttribute : Attribute
     {
-        private int _order;
+        private int _offset;
 
-        public FixedLengthFieldAttribute(int order)
+        public UnionFieldAttribute(int offset)
         {
-            _order = order;
+            _offset = offset;
         }
 
-        public int GetOrder()
+        public int GetOffset()
         {
-            return _order;
+            return _offset;
         }
     }
 }

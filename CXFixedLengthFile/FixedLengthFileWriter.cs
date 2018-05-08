@@ -1,5 +1,6 @@
 ﻿using CXFixedLengthFile.Attributes;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -18,101 +19,106 @@ namespace CXFixedLengthFile
             _fileStream = stream;
         }
 
-        private (int length, byte[] buffer) GetFieldBuffer<T>(T model, FieldInfo field, FixedLengthFieldAttribute fieldAttr)
+        private (int length, byte[] buffer) GetFieldBuffer<T>(T model,
+            Type fieldType,
+            string fieldOrProp,
+            string fieldName,
+            object fieldValue,
+            FieldLengthAttribute fieldLengthAttr = null,
+            FieldEncodingAttribute fieldEncodingAttr = null)
         {
             int length;
             byte[] buffer;
 
-            var val = field.GetValue(model);
-            if (val == null)
+            if (fieldValue == null)
             {
-                throw new InvalidDataException($"The value of field '{field.Name}' cannot be null.");
+                throw new InvalidDataException($"The value of {fieldOrProp} '{fieldName}' cannot be null.");
             }
 
-            if (typeof(short) == field.FieldType)
+            if (typeof(short) == fieldType)
             {
-                length = fieldAttr.GetLength(sizeof(short));
-                buffer = BitConverter.GetBytes((short)val);
+                length = fieldLengthAttr?.GetLength() ?? sizeof(short);
+                buffer = BitConverter.GetBytes((short)fieldValue);
             }
-            else if (typeof(int) == field.FieldType)
+            else if (typeof(int) == fieldType)
             {
-                length = fieldAttr.GetLength(sizeof(int));
-                buffer = BitConverter.GetBytes((int)val);
+                length = fieldLengthAttr?.GetLength() ?? sizeof(int);
+                buffer = BitConverter.GetBytes((int)fieldValue);
             }
-            else if (typeof(long) == field.FieldType)
+            else if (typeof(long) == fieldType)
             {
-                length = fieldAttr.GetLength(sizeof(long));
-                buffer = BitConverter.GetBytes((long)val);
+                length = fieldLengthAttr?.GetLength() ?? sizeof(long);
+                buffer = BitConverter.GetBytes((long)fieldValue);
             }
-            else if (typeof(bool) == field.FieldType)
+            else if (typeof(bool) == fieldType)
             {
-                length = fieldAttr.GetLength(sizeof(bool));
-                buffer = BitConverter.GetBytes((bool)val);
+                length = fieldLengthAttr?.GetLength() ?? sizeof(bool);
+                buffer = BitConverter.GetBytes((bool)fieldValue);
             }
-            else if (typeof(float) == field.FieldType)
+            else if (typeof(float) == fieldType)
             {
-                length = fieldAttr.GetLength(sizeof(float));
-                buffer = BitConverter.GetBytes((float)val);
+                length = fieldLengthAttr?.GetLength() ?? sizeof(float);
+                buffer = BitConverter.GetBytes((float)fieldValue);
             }
-            else if (typeof(double) == field.FieldType)
+            else if (typeof(double) == fieldType)
             {
-                length = fieldAttr.GetLength(sizeof(double));
-                buffer = BitConverter.GetBytes((double)val);
+                length = fieldLengthAttr?.GetLength() ?? sizeof(double);
+                buffer = BitConverter.GetBytes((double)fieldValue);
             }
-            else if (typeof(ushort) == field.FieldType)
+            else if (typeof(ushort) == fieldType)
             {
-                length = fieldAttr.GetLength(sizeof(ushort));
-                buffer = BitConverter.GetBytes((ushort)val);
+                length = fieldLengthAttr?.GetLength() ?? sizeof(ushort);
+                buffer = BitConverter.GetBytes((ushort)fieldValue);
             }
-            else if (typeof(uint) == field.FieldType)
+            else if (typeof(uint) == fieldType)
             {
-                length = fieldAttr.GetLength(sizeof(uint));
-                buffer = BitConverter.GetBytes((uint)val);
+                length = fieldLengthAttr?.GetLength() ?? sizeof(uint);
+                buffer = BitConverter.GetBytes((uint)fieldValue);
             }
-            else if (typeof(ulong) == field.FieldType)
+            else if (typeof(ulong) == fieldType)
             {
-                length = fieldAttr.GetLength(sizeof(ulong));
-                buffer = BitConverter.GetBytes((ulong)val);
+                length = fieldLengthAttr?.GetLength() ?? sizeof(ulong);
+                buffer = BitConverter.GetBytes((ulong)fieldValue);
             }
-            else if (typeof(char) == field.FieldType)
+            else if (typeof(char) == fieldType)
             {
-                length = fieldAttr.GetLength(sizeof(char));
-                buffer = BitConverter.GetBytes((char)val);
+                length = fieldLengthAttr?.GetLength() ?? sizeof(char);
+                buffer = BitConverter.GetBytes((char)fieldValue);
             }
-            else if (typeof(byte) == field.FieldType)
+            else if (typeof(byte) == fieldType)
             {
-                length = fieldAttr.GetLength(sizeof(byte));
-                buffer = new byte[] { (byte)val };
+                length = fieldLengthAttr?.GetLength() ?? sizeof(byte);
+                buffer = new byte[] { (byte)fieldValue };
             }
-            else if (typeof(byte[]) == field.FieldType)
+            else if (typeof(byte[]) == fieldType)
             {
-                length = fieldAttr.GetLength(-1);
+                length = fieldLengthAttr?.GetLength() ?? -1;
                 if (length == -1)
                 {
-                    throw new InvalidDataException($"Should specific length of string field '{field.Name}'.");
+                    throw new InvalidDataException($"Should specific length of string {fieldOrProp} '{fieldName}'.");
                 }
-                buffer = (byte[])val;
+                buffer = (byte[])fieldValue;
             }
-            else if (typeof(string) == field.FieldType)
+            else if (typeof(string) == fieldType)
             {
-                length = fieldAttr.GetLength(-1);
+                length = fieldLengthAttr?.GetLength() ?? -1;
                 if (length == -1)
                 {
-                    throw new InvalidDataException($"Should specific length of string field '{field.Name}'.");
+                    throw new InvalidDataException($"Should specific length of string {fieldOrProp} '{fieldName}'.");
                 }
-                buffer = Encoding.GetEncoding(fieldAttr.encoding)
-                    .GetBytes((string)val);
+                var encoding = fieldEncodingAttr?.GetEncoding() ?? Encoding.UTF8;
+                buffer = encoding.GetBytes((string)fieldValue);
             }
             else
             {
                 throw new NotSupportedException(
-                    $"Type {field.FieldType.Name} of field '{field.Name}' is not supported.");
+                    $"Type {fieldType.Name} of {fieldOrProp} '{fieldName}' is not supported.");
             }
 
             if (length < buffer.Length)
             {
-                throw new InvalidDataException($"The value size of field '{field.Name}' exceeds " +
-                    $"the specific field length: {length}.");
+                throw new InvalidDataException($"The value size of {fieldOrProp} '{fieldName}' exceeds " +
+                    $"the specific {fieldOrProp} length: {length}.");
             }
 
             return (length, buffer);
@@ -120,35 +126,24 @@ namespace CXFixedLengthFile
 
         public void Write<T>(T model)
         {
-            foreach (var field in typeof(T).GetFields())
+            var fieldList = FieldHelper.GetFieldList(model, true);
+
+            foreach (var field in fieldList)
             {
-                foreach (var attr in field.GetCustomAttributes(true))
+                (var length, var buffer) = GetFieldBuffer(model,
+                    field.type, field.name, field.fieldOrProp, field.value, 
+                    field.fieldLengthAttr, field.fieldEncodingAttr);
+
+                _fileStream.Write(buffer, 0, buffer.Length);
+
+                if (length > buffer.Length)
                 {
-                    if (attr is FixedLengthFieldAttribute fieldAttr)
-                    {
-                        var offset = fieldAttr.offset;
+                    Debug.WriteLine($"The value size of {field.fieldOrProp} '{field.name}' is smaller than " +
+                        $"the specific {field.fieldOrProp} length {length}. Written bytes will be padded.");
 
-                        if (offset != -1)
-                        {
-                            break;
-                        }
-
-                        (var length, var buffer) = GetFieldBuffer(model, field, fieldAttr);
-
-                        _fileStream.Write(buffer, 0, buffer.Length);
-
-                        if (length > buffer.Length)
-                        {
-                            Debug.WriteLine($"The value size of field '{field.Name}' is smaller than " +
-                                $"the specific field length{length}. Written bytes will be padded.");
-
-                            buffer = new byte[length - buffer.Length];
-                            // for (int i = 0; i < buffer.Length; ++i) buffer[i] = 0;
-                            _fileStream.Write(buffer, 0, buffer.Length);
-                        }
-
-                        break;
-                    }
+                    buffer = new byte[length - buffer.Length];
+                    // for (int i = 0; i < buffer.Length; ++i) buffer[i] = 0;
+                    _fileStream.Write(buffer, 0, buffer.Length);
                 }
             }
         }

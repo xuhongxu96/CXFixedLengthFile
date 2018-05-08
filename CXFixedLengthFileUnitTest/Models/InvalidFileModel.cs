@@ -12,6 +12,7 @@ namespace CXFixedLengthFileUnitTest.Models
         /// Length: 1
         /// </summary>
         [FixedLengthField(1)]
+        [FieldLength(1)]
         public int intField;
     }
 }
