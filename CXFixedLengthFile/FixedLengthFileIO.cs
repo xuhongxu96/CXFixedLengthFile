@@ -24,5 +24,7 @@ namespace CXFixedLengthFile
             var offset = index * _modelSize;
             _fileStream.Seek(offset, SeekOrigin.Begin);
         }
+
+        public long ModelCount => _fileStream.Length / _modelSize;
     }
 }

@@ -8,10 +8,11 @@
     <PackageProjectUrl>https://github.com/xuhongxu96/CXFixedLengthFile</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/xuhongxu96/CXFixedLengthFile/LICENSE</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/xuhongxu96/CXFixedLengthFile</RepositoryUrl>
-    <Version>2.0.2</Version>
+    <Version>2.0.3</Version>
     <PackageReleaseNotes>v2.0.0: Re-design the project because GetFields doesn't guarantee the order.
 v2.0.1: Supported types DateTime, TimeSpan.
-v2.0.2: Added SeekModel.</PackageReleaseNotes>
+v2.0.2: Added SeekModel.
+v2.0.3: Added ModelCount</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
